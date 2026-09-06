@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VINAYAK PG | Management Portal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root{
+    --navy:#0e1e3d;
+    --navy-2:#132a52;
+    --blue:#2563eb;
+    --blue-dark:#1d4ed8;
+    --blue-tint:#eaf1ff;
+    --green:#16a34a;
+    --green-tint:#eafaf0;
+    --amber:#d97706;
+    --amber-tint:#fef6e7;
+    --red:#dc2626;
+    --red-tint:#fdeceb;
+    --purple:#7c3aed;
+    --ink:#0f172a;
+    --ink-soft:#475569;
+    --ink-faint:#94a3b8;
+    --line:#e2e8f0;
+    --bg:#f4f6fa;
+    --card:#ffffff;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.04);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    font-size:14px;
+    display:flex;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  a{text-decoration:none;color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    width:250px;
+    flex-shrink:0;
+    background:var(--navy);
+    color:#cfd8ea;
+    display:flex;
+    flex-direction:column;
+    position:sticky;
+    top:0;
+    height:100vh;
+  }
+  .sidebar-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:20px 18px;
+    font-weight:700;
+    font-size:15px;
+    color:#fff;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .sidebar-brand .logo-mark{
+    width:30px;height:30px;border-radius:8px;
+    background:var(--blue);
+    display:flex;align-items:center;justify-content:center;
+    font-size:0;
+  }
+  .sidebar-brand .logo-mark::after{content:'V';font-size:16px;font-weight:800;}
+  .sidebar-brand div{font-size:14px;letter-spacing:.5px;line-height:1.25;}
+  .sidebar-brand div span{display:block;font-weight:400;font-size:11px;color:#93a4c4;letter-spacing:0;}
+
+  .nav-scroll{flex:1;overflow-y:auto;padding:10px 10px;}
+  .nav-item{
+    display:flex;align-items:center;gap:11px;
+    padding:9px 12px;
+    border-radius:8px;
+    color:#b7c3dd;
+    font-size:13.3px;
+    margin-bottom:2px;
+    position:relative;
+    transition:background .15s;
+  }
+  .nav-item svg{width:16px;height:16px;flex-shrink:0;}
+  .nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .nav-item.active{background:var(--blue);color:#fff;}
+  .nav-badge{
+    margin-left:auto;background:var(--red);color:#fff;font-size:10.5px;
+    border-radius:20px;padding:1px 6px;font-weight:600;
+  }
+  .quick-actions{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px;}
+  .welcome{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;}
+  .welcome h2{margin:0;color:var(--navy);font-size:24px;line-height:1.2;}
+  .welcome p{margin:6px 0 0;color:var(--ink-soft);font-size:13px;}
+  .date-note{font-size:12px;color:var(--ink-faint);white-space:nowrap;}
+
+  .sidebar-footer{
+    padding:14px 16px;border-top:1px solid rgba(255,255,255,.08);
+  }
+  .footer-link{display:flex;align-items:center;gap:8px;padding:8px 0;color:#b7c3dd;font-size:13px;cursor:pointer;}
+  .footer-link:hover{color:#fff;}
+  .sidebar-user{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .avatar{
+    width:34px;height:34px;border-radius:50%;
+    background:linear-gradient(135deg,#60a5fa,#a78bfa);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;color:#fff;font-size:13px;flex-shrink:0;
+  }
+  .sidebar-user div span{display:block;font-size:11px;color:#93a4c4;}
+  .logout-link{display:flex;align-items:center;gap:8px;font-size:13px;color:#f0a3a3;}
+
+  /* ---------- MAIN ---------- */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .topbar{
+    background:var(--card);
+    border-bottom:1px solid var(--line);
+    padding:16px 28px;
+    display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:5;
+  }
+  .topbar h1{font-size:20px;margin:0;color:var(--navy);letter-spacing:0;font-weight:700;}
+  .topbar h1::after{content:' / Vinayak PG';font-size:12px;font-weight:500;color:var(--ink-faint);margin-left:8px;}
+  .topbar-right{display:flex;align-items:center;gap:14px;}
+  .pill-select{
+    border:1px solid var(--line);background:#fff;border-radius:8px;
+    padding:7px 12px;font-size:12.5px;color:var(--ink-soft);display:flex;align-items:center;gap:6px;
+  }
+  .icon-btn{
+    width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:#fff;
+    display:flex;align-items:center;justify-content:center;position:relative;color:var(--ink-soft);
+  }
+  .icon-btn .dot{
+    position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;
+    font-size:9.5px;font-weight:700;border-radius:20px;padding:1px 5px;
+  }
+  .topbar-user{display:flex;align-items:center;gap:8px;font-size:13px;}
+  .topbar-user span{display:block;font-size:11px;color:var(--ink-faint);}
+
+  .content{padding:28px 32px 60px;max-width:1480px;width:100%;}
+  .page{display:none;}
+  .page.active{display:block;}
+
+  /* ---------- STAT CARDS ---------- */
+  .stat-row{display:grid;gap:14px;margin-bottom:18px;}
+  .stat-card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:17px 18px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--shadow);
+  }
+  .stat-card .ic{
+    width:38px;height:38px;border-radius:10px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .stat-card .ic svg{width:19px;height:19px;}
+  .stat-card .num{font-size:22px;font-weight:700;color:var(--ink);line-height:1.15;}
+  .stat-card .label{font-size:12px;color:var(--ink-soft);margin-bottom:2px;}
+  .stat-card .sub{font-size:11.5px;color:var(--ink-faint);margin-top:2px;}
+  .stat-card .sub.link{color:var(--blue);cursor:pointer;}
+  .stat-card .delta{font-size:11.5px;font-weight:600;margin-top:2px;}
+  .delta.up{color:var(--green);}
+  .delta.down{color:var(--red);}
+
+  .bg-blue{background:var(--blue-tint);color:var(--blue);}
+  .bg-green{background:var(--green-tint);color:var(--green);}
+  .bg-amber{background:var(--amber-tint);color:var(--amber);}
+  .bg-red{background:var(--red-tint);color:var(--red);}
+  .bg-purple{background:#f1eaff;color:var(--purple);}
+
+  /* ---------- PANELS / CARDS ---------- */
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+  .grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-bottom:16px;}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px;box-shadow:var(--shadow);
+  }
+  .panel h3{margin:0 0 12px;font-size:14.5px;color:var(--navy);}
+  .panel h3 .muted{font-weight:400;color:var(--ink-faint);font-size:12px;}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .panel-head h3{margin:0;}
+  .view-all{font-size:12.5px;color:var(--blue);font-weight:600;}
+
+  .list-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .list-row:last-child{border-bottom:none;}
+  .list-row .dot-ic{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .list-row .dot-ic svg{width:13px;height:13px;}
+  .list-row .txt{flex:1;}
+  .list-row .amt{font-weight:700;}
+  .list-row .chev{color:var(--ink-faint);}
+
+  /* donut */
+  .donut-wrap{display:flex;align-items:center;gap:20px;}
+  .donut{position:relative;width:130px;height:130px;flex-shrink:0;}
+  .donut canvas{width:100%!important;height:100%!important;}
+  .donut .center{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .donut .center b{font-size:22px;color:var(--navy);}
+  .donut .center span{font-size:11px;color:var(--ink-faint);}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:12.5px;margin-bottom:8px;color:var(--ink-soft);}
+  .legend-item b{margin-left:auto;color:var(--ink);}
+  .swatch{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+
+  /* tables */
+  .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{
+    text-align:left;background:var(--bg);color:var(--ink-soft);font-weight:600;
+    font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;padding:11px 14px;border-bottom:1px solid var(--line);
+  }
+  tbody td{padding:12px 14px;border-bottom:1px solid var(--line);color:var(--ink);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#fafbfe;}
+  .cell-user{display:flex;align-items:center;gap:10px;}
+  .thumb{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#93c5fd,#c4b5fd);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:600;}
+  .badge.active,.badge.paid,.badge.resolved,.badge.exited{background:var(--green-tint);color:var(--green);}
+  .badge.pending,.badge.partial,.badge.progress,.badge.today{background:var(--amber-tint);color:var(--amber);}
+  .badge.overdue,.badge.open,.badge.high{background:var(--red-tint);color:var(--red);}
+  .badge.inside{background:var(--blue-tint);color:var(--blue);}
+  .badge.medium{background:var(--amber-tint);color:var(--amber);}
+  .badge.low{background:var(--blue-tint);color:var(--blue);}
+
+  .toolbar{display:flex;align-items:center;gap:10px;padding:16px 18px;flex-wrap:wrap;}
+  .search-input{
+    flex:1;min-width:200px;display:flex;align-items:center;gap:8px;border:1px solid var(--line);
+    border-radius:8px;padding:8px 12px;background:#fff;color:var(--ink-faint);font-size:13px;
+  }
+  .search-input svg{width:15px;height:15px;flex-shrink:0;}
+  .search-input input{border:none;outline:none;font-size:13px;width:100%;background:transparent;}
+  .filter-select{
+    border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12.5px;color:var(--ink-soft);background:#fff;
+  }
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;background:var(--blue);color:#fff;border:none;
+    border-radius:7px;padding:9px 16px;font-size:13px;font-weight:600;box-shadow:0 1px 2px rgba(37,99,235,.2);
+  }
+  .btn svg{width:14px;height:14px;}
+  .btn.outline{background:#fff;color:var(--blue);border:1px solid var(--blue);}
+  .btn.ghost{background:#fff;color:var(--ink-soft);border:1px solid var(--line);}
+  .btn-sm{padding:6px 12px;font-size:12px;border-radius:7px;}
+
+  .tabs{display:flex;gap:22px;padding:0 18px;border-bottom:1px solid var(--line);}
+  .tab{padding:13px 0;font-size:13px;color:var(--ink-soft);border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;cursor:pointer;}
+  .tab.active{color:var(--blue);border-color:var(--blue);font-weight:600;}
+  .tab .dot{width:7px;height:7px;border-radius:50%;}
+
+  .action-icons{display:flex;gap:6px;}
+  .action-icons button{width:28px;height:28px;border-radius:6px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);}
+  .action-icons button svg{width:13px;height:13px;}
+
+  .pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:12.5px;color:var(--ink-faint);}
+  .pagination .pg-btns{display:flex;align-items:center;gap:5px;}
+  .pg-num{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:#fff;}
+  .pg-num.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+  /* Rooms & Beds */
+  .filter-row{display:flex;gap:12px;flex-wrap:wrap;padding:16px 18px 4px;}
+  .filter-col{flex:1;min-width:140px;}
+  .filter-col label{display:block;font-size:11.5px;color:var(--ink-faint);margin-bottom:5px;}
+  .seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .seg button{border:none;background:#fff;padding:7px 12px;font-size:12.5px;color:var(--ink-soft);display:flex;align-items:center;gap:6px;}
+  .seg button.active{background:var(--blue);color:#fff;}
+
+  .legend-row{display:flex;gap:18px;padding:12px 18px;font-size:12px;color:var(--ink-soft);flex-wrap:wrap;}
+  .legend-row .swatch{width:8px;height:8px;}
+
+  .room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;padding:8px 18px 18px;}
+  .room-card{border:1px solid var(--line);border-radius:10px;padding:14px;}
+  .room-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;}
+  .room-card-head b{font-size:14.5px;}
+  .room-card .meta{font-size:11.5px;color:var(--ink-faint);margin-bottom:10px;}
+  .bed-row{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:6px 0;border-bottom:1px dashed var(--line);}
+  .bed-row:last-child{border-bottom:none;}
+  .bed-row svg{width:13px;height:13px;color:var(--ink-faint);flex-shrink:0;}
+  .bed-row .name{flex:1;color:var(--ink-soft);}
+  .room-card .btn-row{display:flex;gap:8px;margin-top:12px;}
+  .room-card .btn-row button{flex:1;}
+
+  .info-banner{
+    display:flex;align-items:center;justify-content:space-between;background:var(--blue-tint);
+    color:var(--blue-dark);border-radius:10px;padding:11px 16px;font-size:12.5px;margin:0 18px 18px;
+  }
+  .info-banner a{font-weight:600;}
+
+  /* Food menu */
+  .menu-table td,.menu-table th{vertical-align:top;}
+  .menu-table td.today-col,.menu-table th.today-col{background:var(--blue-tint);}
+  .meal-time{color:var(--ink-faint);font-size:11px;display:block;margin-top:2px;}
+  .menu-table ul{margin:0;padding-left:16px;font-size:12.3px;color:var(--ink-soft);line-height:1.7;}
+  .today-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:16px 18px;}
+  .today-card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
+  .today-card .t-head{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;margin-bottom:6px;}
+  .today-card p{margin:0;font-size:12.5px;color:var(--ink-soft);}
+  .today-card .time{font-size:11px;color:var(--ink-faint);margin-top:5px;}
+
+  /* Visitors form */
+  .form-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:6px 18px 18px;align-items:end;}
+  .form-col label{display:block;font-size:11.5px;color:var(--ink-faint);margin-bottom:6px;}
+  .form-col label b{color:var(--red);}
+  .form-col input,.form-col select{
+    width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--ink);
+  }
+
+  /* Notifications */
+  .notif-day{font-size:12px;font-weight:700;color:var(--ink-faint);padding:14px 18px 6px;text-transform:uppercase;letter-spacing:.3px;}
+  .notif-item{display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);}
+  .notif-item .dot-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .notif-item .dot-ic svg{width:16px;height:16px;}
+  .notif-item .title-row{display:flex;align-items:center;gap:8px;}
+  .notif-item .title-row b{font-size:13.3px;}
+  .notif-item p{margin:3px 0 0;font-size:12.5px;color:var(--ink-soft);}
+  .notif-item .time{margin-left:auto;font-size:11.5px;color:var(--ink-faint);white-space:nowrap;display:flex;align-items:center;gap:8px;}
+  .unread-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);}
+  .new-tag{background:var(--blue);color:#fff;font-size:9.5px;padding:1px 6px;border-radius:20px;font-weight:700;}
+
+  .chart-box{position:relative;height:220px;}
+  h4.section-tag{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-faint);margin:0 0 4px;}
+
+  @media (max-width:1150px){
+    .stat-row{grid-template-columns:repeat(2,1fr)!important;}
+    .grid3,.grid2{grid-template-columns:1fr;}
+    .form-grid{grid-template-columns:repeat(2,1fr);}
+    .today-summary{grid-template-columns:1fr;}
+  }
+  .mobile-menu{display:none;}
+  @media (max-width:760px){
+    body{display:block;}
+    .sidebar{position:fixed;left:-280px;top:0;z-index:20;transition:left .2s ease;box-shadow:12px 0 30px rgba(15,23,42,.18);}
+    body.menu-open .sidebar{left:0;}
+    body.menu-open::after{content:'';position:fixed;inset:0;background:rgba(15,23,42,.35);z-index:10;}
+    .main{width:100%;}
+    .topbar{padding:13px 16px;gap:12px;}
+    .topbar h1{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .topbar h1::after{display:none;}
+    .topbar-right{gap:7px;}
+    .topbar-right .pill-select,.topbar-user{display:none;}
+    .mobile-menu{display:flex;width:34px;height:34px;border:1px solid var(--line);border-radius:7px;background:#fff;align-items:center;justify-content:center;color:var(--navy);}
+    .mobile-menu svg{width:18px;height:18px;}
+    .content{padding:20px 16px 40px;}
+    .stat-row,.stat-row[style]{grid-template-columns:1fr!important;}
+    .grid3,.grid2{grid-template-columns:1fr;}
+    .room-grid{grid-template-columns:1fr;padding-left:12px;padding-right:12px;}
+    .toolbar{padding:13px 12px;}
+    .toolbar .search-input{min-width:100%;}
+    .table-wrap{overflow-x:auto;}
+    .table-wrap>.toolbar,.table-wrap>.tabs,.table-wrap>.pagination{min-width:640px;}
+    table{min-width:760px;}
+    .form-grid{grid-template-columns:1fr;padding-left:0;padding-right:0;}
+    .panel-head{gap:10px;}
+    .tabs{gap:15px;min-width:680px;}
+    .info-banner{margin-left:12px;margin-right:12px;}
+    .welcome{display:block;}
+    .welcome h2{font-size:21px;}
+    .date-note{display:block;margin-top:10px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- =============== SIDEBAR =============== -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo-mark"></div>
+    <div>VINAYAK PG<span>Management Portal</span></div>
+  </div>
+  <div class="nav-scroll" id="navScroll">
+    <!-- injected by JS -->
+  </div>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="avatar">RK</div>
+      <div><b>Rajesh Kumar</b><span>Owner</span></div>
+    </div>
+    <div class="footer-link" onclick="go('reports')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 1-2.51-1.42V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 1 6.1 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 1.78 15H1.7a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 3.3 9.18l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8 6.68h.09A1.65 1.65 0 0 0 9 5.17V5a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09A1.65 1.65 0 0 0 19.83 11H20a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-.51 0z"/></svg>
+      Settings
+    </div>
+    <div class="logout-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </div>
+  </div>
+</div>
+
+<!-- =============== MAIN =============== -->
+<div class="main">
+  <div class="topbar">
+    <button class="mobile-menu" aria-label="Open navigation" onclick="document.body.classList.toggle('menu-open')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></button>
+    <h1 id="pageTitle">Dashboard</h1>
+    <div class="topbar-right">
+      <div class="pill-select">English</div>
+      <div class="pill-select">06 September 2026</div>
+      <div class="pill-select">Vinayak PG ▾</div>
+      <div class="icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="dot">3</span>
+      </div>
+      <div class="topbar-user">
+        <div class="avatar" style="width:32px;height:32px;font-size:12px;">RK</div>
+        <div>Rajesh Kumar<span>Owner</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ============ DASHBOARD ============ -->
+    <section class="page active" id="page-dashboard">
+      <div class="welcome">
+        <div><h2>Good morning</h2><p>Vinayak PG — Overview</p></div>
+        <div class="date-note">Sunday, 06 September 2026</div>
+      </div>
+      <div class="quick-actions">
+        <button class="btn" onclick="go('residents')">+ Add Resident</button>
+        <button class="btn outline" onclick="go('rooms')">+ Allocate Bed</button>
+        <button class="btn outline" onclick="go('payments')">+ Collect Rent</button>
+        <button class="btn outline" onclick="go('complaints')">+ Add Complaint</button>
+        <button class="btn outline" onclick="go('reports')">+ Add Expense</button>
+      </div>
+      <div class="stat-row" style="grid-template-columns:repeat(5,1fr);">
+        <div class="stat-card"><div class="ic bg-blue">👥</div><div><div class="label">Total Residents</div><div class="num">48</div><div class="sub link">View all residents</div></div></div>
+        <div class="stat-card"><div class="ic bg-green">🛏️</div><div><div class="label">Total Rooms</div><div class="num">16</div><div class="sub link">View all rooms</div></div></div>
+        <div class="stat-card"><div class="ic bg-blue">🛌</div><div><div class="label">Total Beds</div><div class="num">64</div><div class="sub link">View all beds</div></div></div>
+        <div class="stat-card"><div class="ic bg-green">🧍</div><div><div class="label">Occupied Beds</div><div class="num">52 / 64</div><div class="sub" style="color:var(--green);font-weight:600;">81% occupancy</div></div></div>
+        <div class="stat-card"><div class="ic" style="background:#e6f9f4;color:#0d9488;">₹</div><div><div class="label">Rent Collected (This Month)</div><div class="num">₹1,24,000</div></div></div>
+      </div>
+
+      <div class="grid3">
+        <div class="panel">
+          <h3>Bed Status</h3>
+          <div class="donut-wrap">
+            <div class="donut"><canvas id="chartBedStatus"></canvas><div class="center"><b>81%</b><span>Filled</span></div></div>
+            <div style="flex:1;">
+              <div class="legend-item"><span class="swatch" style="background:#2563eb;"></span>Occupied<b>52</b></div>
+              <div class="legend-item"><span class="swatch" style="background:#16a34a;"></span>Available<b>12</b></div>
+              <div class="legend-item"><span class="swatch" style="background:#cbd5e1;"></span>Maintenance<b>0</b></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Rent Status <span class="muted">(This Month)</span></h3>
+          <div class="list-row"><div class="dot-ic bg-green">✓</div><div class="txt">Paid</div><div class="amt" style="color:var(--green);">₹1,24,000</div></div>
+          <div class="list-row"><div class="dot-ic bg-amber">−</div><div class="txt">Due</div><div class="amt" style="color:var(--amber);">₹18,500</div></div>
+          <div class="list-row"><div class="dot-ic bg-red">!</div><div class="txt">Overdue</div><div class="amt" style="color:var(--red);">₹8,200</div></div>
+        </div>
+        <div class="panel">
+          <h3>Today's Actions</h3>
+          <div class="list-row"><div class="dot-ic bg-red">!</div><div class="txt">Rent Overdue</div><b>3</b><span class="chev">›</span></div>
+          <div class="list-row"><div class="dot-ic bg-amber">📅</div><div class="txt">Rent Due Today</div><b>2</b><span class="chev">›</span></div>
+          <div class="list-row"><div class="dot-ic bg-blue">💬</div><div class="txt">Complaint Pending</div><b>1</b><span class="chev">›</span></div>
+          <div class="list-row"><div class="dot-ic bg-green">🛏️</div><div class="txt">Beds Available</div><b>12</b><span class="chev">›</span></div>
+        </div>
+      </div>
+
+      <div class="grid3">
+        <div class="panel">
+          <h3>Today's Food Menu</h3>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:12.3px;">
+            <div><b>☀️ Breakfast</b><ul style="padding-left:16px;color:var(--ink-soft);line-height:1.8;"><li>Poha</li><li>Tea</li><li>Banana</li></ul></div>
+            <div><b>🍛 Lunch</b><ul style="padding-left:16px;color:var(--ink-soft);line-height:1.8;"><li>Rice</li><li>Dal</li><li>Sabzi</li><li>Curd</li></ul></div>
+            <div><b>🌙 Dinner</b><ul style="padding-left:16px;color:var(--ink-soft);line-height:1.8;"><li>Roti</li><li>Paneer Curry</li><li>Salad</li></ul></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Pending Rent</h3><a class="view-all" href="#" onclick="go('payments')">View all pending</a></div>
+          <div id="dashPendingRent"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Recent Payments</h3><a class="view-all" href="#" onclick="go('payments')">View all payments</a></div>
+          <div id="dashRecentPayments"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RESIDENTS ============ -->
+    <section class="page" id="page-residents">
+      <div class="table-wrap">
+        <div class="toolbar">
+          <div class="search-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search residents by name, phone or room..." /></div>
+          <select class="filter-select"><option>All Rooms</option></select>
+          <select class="filter-select"><option>All Status</option></select>
+          <select class="filter-select"><option>All Gender</option></select>
+          <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Resident</button>
+        </div>
+        <table>
+          <thead><tr><th>#</th><th>Photo</th><th>Resident Name</th><th>Phone</th><th>Room / Bed</th><th>Joining Date</th><th>Last Payment</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="residentsBody"></tbody>
+        </table>
+        <div class="pagination"><span id="residentsCount"></span><div class="pg-btns"><div class="pg-num">‹</div><div class="pg-num active">1</div><div class="pg-num">›</div></div></div>
+      </div>
+    </section>
+
+    <!-- ============ ROOMS & BEDS ============ -->
+    <section class="page" id="page-rooms">
+      <div class="stat-row" style="grid-template-columns:repeat(5,1fr);">
+        <div class="stat-card"><div class="ic bg-blue">🚪</div><div><div class="label">Total Rooms</div><div class="num">16</div><div class="sub">In Selected Floor</div></div></div>
+        <div class="stat-card"><div class="ic bg-green">🛏️</div><div><div class="label">Total Beds</div><div class="num">64</div><div class="sub">In Selected Floor</div></div></div>
+        <div class="stat-card"><div class="ic bg-amber">🧍</div><div><div class="label">Occupied Beds</div><div class="num">46</div><div class="sub" style="color:var(--green);font-weight:600;">71.88% Occupancy</div></div></div>
+        <div class="stat-card"><div class="ic bg-purple">🟪</div><div><div class="label">Available Beds</div><div class="num">18</div><div class="sub" style="color:var(--green);font-weight:600;">28.12% Available</div></div></div>
+        <div class="stat-card"><div class="ic" style="background:#fdeceb;color:#dc2626;">🔧</div><div><div class="label">Under Maintenance</div><div class="num">2</div><div class="sub">Rooms</div></div></div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="filter-row">
+          <div class="filter-col"><label>PG Branch</label><select class="filter-select" style="width:100%;"><option>Sunrise PG</option></select></div>
+          <div class="filter-col"><label>Floor</label><select class="filter-select" style="width:100%;"><option>1st Floor</option></select></div>
+          <div class="filter-col"><label>Room No.</label><select class="filter-select" style="width:100%;"><option>All Rooms</option></select></div>
+          <div class="filter-col">
+            <label>View</label>
+            <div class="seg"><button class="active">▦ Room View</button><button>☰ Floor View</button></div>
+          </div>
+        </div>
+        <div class="legend-row">
+          <span><span class="swatch" style="background:#16a34a;display:inline-block;border-radius:50%;"></span> Available</span>
+          <span><span class="swatch" style="background:#2563eb;display:inline-block;border-radius:50%;"></span> Occupied</span>
+          <span><span class="swatch" style="background:#d97706;display:inline-block;border-radius:50%;"></span> Partially Occupied</span>
+          <span><span class="swatch" style="background:#dc2626;display:inline-block;border-radius:50%;"></span> Maintenance</span>
+        </div>
+        <div class="room-grid" id="roomGrid"></div>
+        <div class="info-banner"><span>ℹ️ Showing rooms from 1st Floor in Sunrise PG</span><a href="#">View all rooms in this floor →</a></div>
+      </div>
+    </section>
+
+    <!-- ============ PAYMENTS & RENT ============ -->
+    <section class="page" id="page-payments">
+      <div class="stat-row" style="grid-template-columns:repeat(4,1fr);">
+        <div class="stat-card"><div class="ic bg-blue">📄</div><div><div class="label">Expected Rent</div><div class="num">₹2,08,000</div><div class="sub link">View Details</div></div></div>
+        <div class="stat-card"><div class="ic bg-green">💳</div><div><div class="label">Collected</div><div class="num">₹1,35,500</div><div class="sub">64.18% of Expected</div></div></div>
+        <div class="stat-card"><div class="ic bg-amber">⏱️</div><div><div class="label">Pending</div><div class="num">₹52,500</div><div class="sub">25.24% of Expected</div></div></div>
+        <div class="stat-card"><div class="ic bg-red">❗</div><div><div class="label">Overdue</div><div class="num">₹20,000</div><div class="sub">9.62% of Expected</div></div></div>
+      </div>
+      <div class="panel" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="ic bg-purple" style="width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;">📅</div>
+          <div><b>Due Today</b><div style="font-size:12px;color:var(--ink-faint);">8 Residents · ₹18,000</div></div>
+        </div>
+        <button class="btn outline">View Due Payments</button>
+      </div>
+      <div class="table-wrap">
+        <div class="tabs">
+          <div class="tab active">All Payments</div>
+          <div class="tab"><span class="dot" style="background:var(--amber);"></span>Pending</div>
+          <div class="tab"><span class="dot" style="background:var(--red);"></span>Overdue</div>
+          <div class="tab"><span class="dot" style="background:var(--green);"></span>Paid</div>
+          <div style="margin-left:auto;padding:10px 0;"><button class="btn">+ Collect Rent</button></div>
+        </div>
+        <div class="toolbar">
+          <div class="search-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search resident, phone or room..." /></div>
+          <select class="filter-select"><option>All Rooms</option></select>
+          <select class="filter-select"><option>All Status</option></select>
+        </div>
+        <table>
+          <thead><tr><th>#</th><th>Resident</th><th>Room / Bed</th><th>Monthly Rent</th><th>Due Date</th><th>Paid</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="paymentsBody"></tbody>
+        </table>
+        <div class="pagination"><span>Showing 1 to 4 of 4 payments</span><span>Rows per page: 10 ▾</span></div>
+      </div>
+    </section>
+
+    <!-- ============ RENT PAYMENT CONFIRMATION ============ -->
+    <section class="page" id="page-confirmation">
+      <div class="grid2">
+        <div class="panel">
+          <h3>Payment Reminder</h3>
+          <div style="border:1px solid var(--line);border-radius:10px;padding:16px;">
+            <div style="text-align:center;font-weight:700;color:var(--navy);margin-bottom:12px;">📅 PAYMENT REMINDER</div>
+            <div class="list-row"><div class="txt">Amount Due</div><b>₹7,000.00</b></div>
+            <div class="list-row"><div class="txt">Due Date</div><b>01 September 2026</b></div>
+            <div class="list-row"><div class="txt">Pay To</div><b>SHREE PG</b></div>
+          </div>
+          <p style="font-size:12.5px;color:var(--ink-soft);margin-top:14px;">Kindly make the payment on or before the due date. After payment, please share the payment screenshot along with Room No., Name and PG Branch.</p>
+        </div>
+        <div class="panel">
+          <h3>Payment Confirmation</h3>
+          <div style="border:1px solid var(--green);background:var(--green-tint);border-radius:10px;padding:20px;text-align:center;">
+            <div style="width:44px;height:44px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px;">✓</div>
+            <div style="font-size:24px;font-weight:700;color:var(--navy);">₹7,000.00</div>
+            <div style="font-size:12px;color:var(--ink-soft);margin-top:6px;">Paid to SHREE PG<br>PhonePe · 4 August 2026, 8:22 am</div>
+          </div>
+          <p style="font-size:12.5px;color:var(--ink-soft);margin-top:14px;">Room no: 203 (behind bar) · Name: Shekhar Patil · Shree_PG Branch-03</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FOOD & MENU ============ -->
+    <section class="page" id="page-food">
+      <div class="table-wrap">
+        <div style="padding:16px 18px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div><b style="font-size:15px;">Weekly Food Menu</b><div style="font-size:12px;color:var(--ink-faint);">View and manage breakfast, lunch and dinner menu for the week.</div></div>
+          <button class="btn">+ Add / Update Menu</button>
+        </div>
+        <div style="padding:14px 18px;"><span class="seg"><button class="btn-sm ghost">‹</button><button class="btn-sm active" style="background:var(--blue);color:#fff;border-radius:7px;padding:6px 14px;border:none;">This Week</button><button class="btn-sm ghost">›</button></span></div>
+        <div style="overflow-x:auto;">
+          <table class="menu-table">
+            <thead><tr><th>Meal / Timing</th><th>Mon<br>12 May</th><th>Tue<br>13 May</th><th>Wed<br>14 May</th><th>Thu<br>15 May</th><th>Fri<br>16 May</th><th>Sat<br>17 May</th><th class="today-col">Sun<br>18 May</th></tr></thead>
+            <tbody id="foodBody"></tbody>
+          </table>
+        </div>
+        <div class="today-summary">
+          <div class="today-card"><div class="t-head">☀️ Breakfast</div><p>Poha, Boiled Peanuts, Tea</p><div class="time">08:00 AM – 09:30 AM</div></div>
+          <div class="today-card"><div class="t-head">🍛 Lunch</div><p>Dal Tadka Rice, Gobi Masala, Salad, Curd</p><div class="time">01:00 PM – 02:30 PM</div></div>
+          <div class="today-card"><div class="t-head">🌙 Dinner</div><p>Paneer Masala, Chapati, Salad</p><div class="time">08:00 PM – 09:30 PM</div></div>
+        </div>
+        <div class="info-banner" style="background:var(--amber-tint);color:var(--amber);">ℹ️ Menu is subject to change based on availability of items and season.</div>
+      </div>
+    </section>
+
+    <!-- ============ COMPLAINTS & MAINTENANCE ============ -->
+    <section class="page" id="page-complaints">
+      <div class="stat-row" style="grid-template-columns:repeat(4,1fr);">
+        <div class="stat-card"><div class="ic bg-blue">📋</div><div><div class="label">Total Complaints</div><div class="num">32</div><div class="sub link">View Details</div></div></div>
+        <div class="stat-card"><div class="ic bg-red">⏱️</div><div><div class="label">Open</div><div class="num">12</div><div class="sub">37.50% of Total</div></div></div>
+        <div class="stat-card"><div class="ic bg-amber">🔧</div><div><div class="label">In Progress</div><div class="num">6</div><div class="sub">18.75% of Total</div></div></div>
+        <div class="stat-card"><div class="ic bg-green">✓</div><div><div class="label">Resolved</div><div class="num">13</div><div class="sub">40.63% of Total</div></div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="toolbar">
+          <div class="search-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search complaint, resident or room..." /></div>
+          <select class="filter-select"><option>All Status</option></select>
+          <select class="filter-select"><option>All Categories</option></select>
+          <select class="filter-select"><option>All Rooms</option></select>
+          <button class="btn ghost">▾ Filter</button>
+          <button class="btn">+ Raise Complaint</button>
+        </div>
+        <table>
+          <thead><tr><th>#</th><th>Complaint</th><th>Resident</th><th>Room / Bed</th><th>Category</th><th>Priority</th><th>Status</th><th>Raised On</th><th>Actions</th></tr></thead>
+          <tbody id="complaintsBody"></tbody>
+        </table>
+        <div class="pagination"><span>Showing 1 to 4 of 4 complaints</span><span>Rows per page: 10 ▾</span></div>
+      </div>
+    </section>
+
+    <!-- ============ VISITOR MANAGEMENT ============ -->
+    <section class="page" id="page-visitors">
+      <div class="stat-row" style="grid-template-columns:repeat(4,1fr);">
+        <div class="stat-card"><div class="ic bg-blue">👥</div><div><div class="label">Today's Visitors</div><div class="num">18</div></div></div>
+        <div class="stat-card"><div class="ic bg-green">🧍</div><div><div class="label">Currently Inside</div><div class="num">5</div></div></div>
+        <div class="stat-card"><div class="ic bg-amber">📅</div><div><div class="label">Expected Today</div><div class="num">3</div></div></div>
+        <div class="stat-card"><div class="ic bg-purple">🗓️</div><div><div class="label">This Month</div><div class="num">126</div></div></div>
+      </div>
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-head"><h3>Enter Visitor Details</h3></div>
+        <div class="form-grid" style="padding:0;">
+          <div class="form-col"><label>Visitor Name <b>*</b></label><input placeholder="Enter visitor name"/></div>
+          <div class="form-col"><label>Phone Number <b>*</b></label><input placeholder="Enter phone number"/></div>
+          <div class="form-col"><label>Visiting Resident <b>*</b></label><select><option>Select resident</option></select></div>
+          <div class="form-col"><label>Purpose <b>*</b></label><select><option>Select purpose</option></select></div>
+          <div class="form-col"><label>Entry Time <b>*</b></label><input value="08:35 PM"/></div>
+        </div>
+        <div style="text-align:right;padding-top:6px;"><button class="btn">Add Visitor</button></div>
+      </div>
+      <div class="table-wrap">
+        <div class="toolbar">
+          <b style="font-size:14.5px;margin-right:auto;">Visitor History</b>
+          <div class="search-input" style="max-width:220px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search visitor, resident or room..."/></div>
+          <select class="filter-select"><option>Today</option></select>
+          <select class="filter-select"><option>All Status</option></select>
+          <select class="filter-select"><option>All Rooms</option></select>
+        </div>
+        <table>
+          <thead><tr><th>#</th><th>Visitor Name</th><th>Visiting Resident</th><th>Room / Bed</th><th>Purpose</th><th>Entry Time</th><th>Exit Time</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="visitorsBody"></tbody>
+        </table>
+        <div class="pagination"><span>Showing 1 to 4 of 4 visitors</span><div class="pg-btns"><div class="pg-num">‹</div><div class="pg-num active">1</div><div class="pg-num">›</div></div></div>
+      </div>
+    </section>
+
+    <!-- ============ NOTIFICATIONS ============ -->
+    <section class="page" id="page-notifications">
+      <div class="table-wrap">
+        <div class="toolbar">
+          <div class="search-input" style="max-width:260px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search notifications..."/></div>
+          <div class="seg">
+            <button class="active">All 15</button><button>Unread 5</button><button>Rent 4</button><button>Complaints 2</button><button>Food 1</button>
+          </div>
+          <button class="btn ghost" style="margin-left:auto;">✓ Mark all as read</button>
+          <button class="btn ghost">⚙ Notification Settings</button>
+        </div>
+        <div id="notifList"></div>
+      </div>
+    </section>
+
+    <!-- ============ REPORTS & ANALYTICS ============ -->
+    <section class="page" id="page-reports">
+      <div class="toolbar" style="padding:0 0 16px;">
+        <select class="filter-select">📅 This Month</select>
+        <select class="filter-select">Report Type</select>
+        <select class="filter-select">All Rooms</select>
+        <button class="btn ghost" style="margin-left:auto;">▾ More Filters</button>
+        <button class="btn">⬇ Generate Report</button>
+      </div>
+      <div class="stat-row" style="grid-template-columns:repeat(4,1fr);">
+        <div class="stat-card"><div class="ic bg-blue">💳</div><div><div class="label">Rent Collected</div><div class="num">₹2,48,000</div><div class="delta up">↑ 18% vs Last Month</div></div></div>
+        <div class="stat-card"><div class="ic bg-red">💸</div><div><div class="label">Expenses</div><div class="num">₹98,650</div><div class="delta up">↑ 8% vs Last Month</div></div></div>
+        <div class="stat-card"><div class="ic bg-amber">₹</div><div><div class="label">Pending Rent</div><div class="num">₹45,000</div><div class="delta up">↑ 12% vs Last Month</div></div></div>
+        <div class="stat-card"><div class="ic bg-green">📈</div><div><div class="label">Net Income</div><div class="num">₹1,49,350</div><div class="delta up">↑ 26% vs Last Month</div></div></div>
+      </div>
+      <div class="grid3">
+        <div class="panel">
+          <div class="panel-head"><h3>Monthly Rent Collection</h3><span class="muted" style="font-size:11.5px;">Last 6 Months ▾</span></div>
+          <div class="chart-box"><canvas id="chartRent"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Expense Overview <span class="muted">(This Month)</span></h3></div>
+          <div class="donut-wrap">
+            <div class="donut" style="width:110px;height:110px;"><canvas id="chartExpense"></canvas><div class="center"><b style="font-size:15px;">₹98,650</b><span>Total</span></div></div>
+            <div style="flex:1;font-size:11.5px;">
+              <div class="legend-item"><span class="swatch" style="background:#2563eb;"></span>Food & Groceries<b>₹43,200 (43.8%)</b></div>
+              <div class="legend-item"><span class="swatch" style="background:#a855f7;"></span>Staff Salary<b>₹20,000 (20.3%)</b></div>
+              <div class="legend-item"><span class="swatch" style="background:#f59e0b;"></span>Maintenance<b>₹12,500 (12.7%)</b></div>
+              <div class="legend-item"><span class="swatch" style="background:#0ea5e9;"></span>Utilities<b>₹8,450 (8.6%)</b></div>
+              <div class="legend-item"><span class="swatch" style="background:#ec4899;"></span>Other Expenses<b>₹14,500 (14.6%)</b></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Occupancy Overview <span class="muted">(This Month)</span></h3></div>
+          <div class="donut-wrap">
+            <div class="donut" style="width:110px;height:110px;"><canvas id="chartOcc"></canvas><div class="center"><b style="font-size:17px;">18</b><span>of 20 Rooms</span></div></div>
+            <div style="flex:1;">
+              <div class="legend-item"><span class="swatch" style="background:#16a34a;"></span>Occupied<b>18 (90%)</b></div>
+              <div class="legend-item"><span class="swatch" style="background:#e2e8f0;"></span>Vacant<b>2 (10%)</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid3">
+        <div class="panel">
+          <div class="panel-head"><h3>Pending Rent Overview</h3><a class="view-all" href="#">View All</a></div>
+          <table style="font-size:12.3px;"><thead><tr><th>Resident</th><th>Room/Bed</th><th>Balance</th><th>Overdue</th></tr></thead>
+            <tbody id="reportPendingRent"></tbody></table>
+          <div style="display:flex;justify-content:space-between;padding:10px 4px 0;font-weight:700;font-size:13px;"><span>Total Pending Rent</span><span style="color:var(--red);">₹45,000</span></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Recent Complaints</h3><a class="view-all" href="#">View All</a></div>
+          <table style="font-size:12.3px;"><thead><tr><th>Complaint</th><th>Resident</th><th>Status</th></tr></thead>
+            <tbody id="reportComplaints"></tbody></table>
+        </div>
+        <div class="panel">
+          <h3>Quick Summary <span class="muted">(This Month)</span></h3>
+          <div class="list-row"><div class="txt">💰 Total Collection</div><b>₹2,48,000</b></div>
+          <div class="list-row"><div class="txt">💸 Total Expenses</div><b>₹98,650</b></div>
+          <div class="list-row"><div class="txt">⏳ Pending Rent</div><b>₹45,000</b></div>
+          <div class="list-row"><div class="txt">📈 Net Income</div><b>₹1,49,350</b></div>
+          <div class="list-row"><div class="txt">📊 Collection Rate</div><b>86.21%</b></div>
+        </div>
+      </div>
+      <div class="info-banner" style="margin:0;">ℹ️ Detailed analysis, comparisons and export options are available in each report.</div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+/* ---------------- ICONS ---------------- */
+const ICONS = {
+  dashboard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>',
+  residents:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  rooms:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>',
+  payments:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>',
+  food:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>',
+  complaints:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+  visitors:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>',
+  finance:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+  inventory:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
+  staff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  documents:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  notifications:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+  reports:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+  bed:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>'
+};
+
+const NAV = [
+  {group:'MAIN'},
+  {id:'dashboard',label:'Dashboard',icon:'dashboard'},
+  {id:'rooms',label:'Rooms & Beds',icon:'rooms'},
+  {id:'residents',label:'Residents',icon:'residents'},
+  {group:'OPERATIONS'},
+  {id:'payments',label:'Rent & Payments',icon:'payments'},
+  {id:'complaints',label:'Complaints',icon:'complaints'},
+  {id:'visitors',label:'Visitors',icon:'visitors'},
+  {id:'food',label:'Food / Meals',icon:'food'},
+  {id:'confirmation',label:'Payment Confirmation',icon:'payments'},
+  {group:'MANAGEMENT'},
+  {id:'reports',label:'Reports',icon:'reports'},
+  {id:'notifications',label:'Notifications',icon:'notifications',badge:3},
+];
+
+const navScroll = document.getElementById('navScroll');
+NAV.forEach(item=>{
+  if(item.group){
+    const group = document.createElement('div');
+    group.className = 'nav-group';
+    group.textContent = item.group;
+    navScroll.appendChild(group);
+    return;
+  }
+  const a = document.createElement('a');
+  a.href="#";
+  a.className = 'nav-item'+(item.id==='dashboard'?' active':'');
+  a.dataset.page = item.id;
+  a.innerHTML = ICONS[item.icon] + '<span>'+item.label+'</span>' + (item.badge? '<span class="nav-badge">'+item.badge+'</span>':'');
+  a.onclick = (e)=>{e.preventDefault(); go(item.id);};
+  navScroll.appendChild(a);
+});
+
+const TITLES = {
+  dashboard:'Dashboard', residents:'Residents', rooms:'Rooms & Beds', payments:'Rent & Payments',
+  confirmation:'Rent Payment Confirmation', food:'Food & Menu', complaints:'Complaints',
+  visitors:'Visitor Management', notifications:'Notifications', reports:'Reports'
+};
+
+function go(pageId){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+pageId).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===pageId));
+  document.getElementById('pageTitle').textContent = TITLES[pageId];
+  document.body.classList.remove('menu-open');
+  window.scrollTo(0,0);
+}
+
+/* ---------------- DATA ---------------- */
+const residents = [
+  {name:'Amit Verma', phone:'98765 43210', room:'101 / Bed 1', join:'01 Apr 2025', paid:'05 May 2025', status:'Active'},
+  {name:'Rahul Sharma', phone:'91234 56780', room:'102 / Bed 2', join:'15 Mar 2025', paid:'05 May 2025', status:'Active'},
+  {name:'Siddharth Jain', phone:'99887 76655', room:'103 / Bed 1', join:'20 Feb 2025', paid:'04 May 2025', status:'Active'},
+  {name:'Vikash Yadav', phone:'88776 65544', room:'104 / Bed 3', join:'10 Feb 2025', paid:'03 May 2025', status:'Active'},
+];
+function initials(n){return n.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();}
+document.getElementById('residentsBody').innerHTML = residents.map((r,i)=>`
+  <tr><td>${i+1}</td><td><div class="thumb">${initials(r.name)}</div></td><td><b>${r.name}</b></td><td>${r.phone}</td>
+  <td>${r.room}</td><td>${r.join}</td><td>${r.paid}</td><td><span class="badge active">● Active</span></td>
+  <td><button class="btn btn-sm ghost">👁 View</button></td></tr>`).join('');
+document.getElementById('residentsCount').textContent = `Showing 1 to ${residents.length} of ${residents.length} residents`;
+
+/* dashboard pending rent / recent payments */
+const pendingRent = [
+  {name:'Arun Kumar', room:'101 / Bed 1', amt:'₹8,000', date:'18 May'},
+  {name:'Neha Patel', room:'102 / Bed 1', amt:'₹8,000', date:'17 May'},
+  {name:'Vikash Yadav', room:'104 / Bed 1', amt:'₹8,000', date:'16 May'},
+  {name:'Meera Joshi', room:'105 / Bed 2', amt:'₹8,500', date:'15 May'},
+  {name:'Ravi Gupta', room:'103 / Bed 2', amt:'₹6,000', date:'14 May'},
+];
+const recentPayments = [
+  {name:'Rahul Sharma', room:'101 / Bed 1', amt:'₹8,000', date:'18 May'},
+  {name:'Priya Singh', room:'103 / Bed 1', amt:'₹8,000', date:'17 May'},
+  {name:'Karan Singh', room:'104 / Bed 1', amt:'₹8,000', date:'16 May'},
+  {name:'Sourav Das', room:'105 / Bed 2', amt:'₹8,000', date:'15 May'},
+  {name:'Amit Verma', room:'101 / Bed 3', amt:'₹8,000', date:'14 May'},
+];
+document.getElementById('dashPendingRent').innerHTML = pendingRent.map(p=>`
+  <div class="list-row"><div class="thumb" style="width:26px;height:26px;font-size:10px;">${initials(p.name)}</div>
+  <div class="txt"><b>${p.name}</b><br><span style="color:var(--ink-faint);font-size:11px;">${p.room}</span></div>
+  <div style="text-align:right;"><b>${p.amt}</b><br><span style="color:var(--ink-faint);font-size:11px;">${p.date}</span></div></div>`).join('');
+document.getElementById('dashRecentPayments').innerHTML = recentPayments.map(p=>`
+  <div class="list-row"><div class="thumb" style="width:26px;height:26px;font-size:10px;">${initials(p.name)}</div>
+  <div class="txt"><b>${p.name}</b><br><span style="color:var(--ink-faint);font-size:11px;">${p.room}</span></div>
+  <div style="text-align:right;"><b style="color:var(--green);">${p.amt}</b><br><span style="color:var(--ink-faint);font-size:11px;">${p.date}</span></div></div>`).join('');
+
+/* rooms & beds */
+const rooms = [
+  {no:'101', status:'Available', statusClass:'active', beds:[
+    {name:'Rahul Sharma', st:'Paid'}, {name:'Amit Verma', st:'Paid'}, {name:'Siddharth Jain', st:'Paid'}, {name:'Available', st:'Available'}
+  ]},
+  {no:'102', status:'Partially Occupied', statusClass:'pending', beds:[
+    {name:'Vikash Yadav', st:'Pending'}, {name:'Arun Kumar', st:'Pending'}, {name:'Available', st:'Available'}, {name:'Available', st:'Available'}
+  ]},
+  {no:'103', status:'Available', statusClass:'active', beds:[
+    {name:'Available', st:'Available'}, {name:'Available', st:'Available'}, {name:'Available', st:'Available'}, {name:'Available', st:'Available'}
+  ]},
+];
+document.getElementById('roomGrid').innerHTML = rooms.map(r=>`
+  <div class="room-card">
+    <div class="room-card-head"><b>Room ${r.no}</b><span class="badge ${r.statusClass==='active'?'active':'pending'}">${r.status}</span></div>
+    <div class="meta">4 Beds · 1st Floor</div>
+    ${r.beds.map((b,i)=>`<div class="bed-row">${ICONS.bed}<span class="name">Bed ${i+1} ${b.name!=='Available'?'— '+b.name:''}</span><span class="badge ${b.st==='Paid'?'active':b.st==='Pending'?'pending':'active'}" style="font-size:10.5px;">${b.st}</span></div>`).join('')}
+    <div class="btn-row"><button class="btn btn-sm ghost">View Details</button><button class="btn btn-sm">Manage Room</button></div>
+  </div>`).join('');
+
+/* payments table */
+const payments = [
+  {name:'Amit Verma', phone:'98765 43210', room:'101 / Bed 1', rent:'₹8,000', due:'01 Jun 2025', paid:'₹8,000', bal:'₹0', status:'paid'},
+  {name:'Rahul Sharma', phone:'91234 56780', room:'102 / Bed 2', rent:'₹8,000', due:'15 Jun 2025', paid:'₹3,000', bal:'₹5,000', status:'partial'},
+  {name:'Sidharth Jain', phone:'99887 76655', room:'103 / Bed 1', rent:'₹7,500', due:'10 Jun 2025', paid:'₹0', bal:'₹7,500', status:'overdue'},
+  {name:'Arun Kumar', phone:'77665 54433', room:'105 / Bed 2', rent:'₹8,000', due:'05 Jun 2025', paid:'₹8,000', bal:'₹0', status:'paid'},
+];
+document.getElementById('paymentsBody').innerHTML = payments.map((p,i)=>`
+  <tr><td>${i+1}</td><td class="cell-user"><div class="thumb">${initials(p.name)}</div><div><b>${p.name}</b><br><span style="color:var(--ink-faint);font-size:11.5px;">${p.phone}</span></div></td>
+  <td>${p.room}</td><td>${p.rent}</td><td>${p.due}</td><td>${p.paid}</td><td>${p.bal}</td>
+  <td><span class="badge ${p.status}">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span></td>
+  <td><div class="action-icons"><button>👁</button><button>₹</button><button>⋮</button></div></td></tr>`).join('');
+
+/* food menu */
+const days = ['Mon<br>12 May','Tue<br>13 May','Wed<br>14 May','Thu<br>15 May','Fri<br>16 May','Sat<br>17 May','Sun<br>18 May'];
+const meals = [
+  {name:'Breakfast', time:'08:00 AM – 09:30 AM', icon:'☀️', items:[
+    ['Upma','Coconut Chutney','Tea'],['Poha','Boiled Peanuts','Tea'],['Idli','Sambar','Coconut Chutney','Tea'],
+    ['Aloo Paratha','Curd','Pickle','Tea'],['Pongal','Coconut Chutney','Tea'],['Bread Omelette','Tomato Ketchup','Tea'],['Poha','Boiled Peanuts','Tea']
+  ]},
+  {name:'Lunch', time:'01:00 PM – 02:30 PM', icon:'🍛', items:[
+    ['Rajma','Steamed Rice','Salad','Curd'],['Dal Tadka','Jeera Rice','Veg Sabzi','Salad'],['Veg Pulao','Raita','Salad','Papad'],
+    ['Chole','Steamed Rice','Salad','Curd'],['Dal Fry','Jeera Rice','Salad','Curd'],['Veg Biryani','Raita','Salad'],['Dal Tadka Rice','Gobi Masala','Salad','Curd']
+  ]},
+  {name:'Dinner', time:'08:00 PM – 09:30 PM', icon:'🌙', items:[
+    ['Chapati','Mix Veg','Dal Tadka'],['Paneer Masala','Chapati','Salad'],['Chapati','Veg Curry','Salad'],
+    ['Veg Curry','Chapati','Aloo Gobi Sabzi'],['Chapati','Paneer Masala','Salad'],['Khichdi','Kadhi','Papad'],['Paneer Masala','Chapati','Salad']
+  ]}
+];
+document.getElementById('foodBody').innerHTML = meals.map(m=>{
+  let row = `<tr><td><b>${m.icon} ${m.name}</b><span class="meal-time">${m.time}</span></td>`;
+  m.items.forEach((it,i)=>{
+    row += `<td${i===6?' class="today-col"':''}><ul>${it.map(x=>'<li>'+x+'</li>').join('')}</ul></td>`;
+  });
+  return row+'</tr>';
+}).join('');
+
+/* complaints */
+const complaints = [
+  {title:'Water Leakage in Bathroom', desc:'Water is leaking from the tap...', icon:'🔧', name:'Amit Verma', phone:'98765 43210', room:'101 / Bed 1', cat:'Plumbing', pr:'high', status:'open', date:'18 May 2025<br>09:15 AM'},
+  {title:'Light Not Working', desc:'Tube light in the room is not working since yesterday.', icon:'💡', name:'Rahul Sharma', phone:'91234 56780', room:'102 / Bed 2', cat:'Electrical', pr:'medium', status:'progress', date:'18 May 2025<br>10:30 AM'},
+  {title:'Fan Making Noise', desc:'Ceiling fan is making a lot of noise while running.', icon:'🌀', name:'Priya Singh', phone:'99887 76655', room:'103 / Bed 1', cat:'Electrical', pr:'low', status:'open', date:'17 May 2025<br>04:45 PM'},
+  {title:'WiFi Connection Issue', desc:'Internet connection is very slow in evenings.', icon:'📶', name:'Vikash Yadav', phone:'88776 65544', room:'104 / Bed 3', cat:'Internet', pr:'medium', status:'progress', date:'17 May 2025<br>03:20 PM'},
+];
+const statusLabel = {open:'Open', progress:'In Progress', resolved:'Resolved'};
+document.getElementById('complaintsBody').innerHTML = complaints.map((c,i)=>`
+  <tr><td>${i+1}</td><td style="display:flex;gap:8px;align-items:flex-start;"><span>${c.icon}</span><div><b>${c.title}</b><br><span style="color:var(--ink-faint);font-size:11.5px;">${c.desc}</span></div></td>
+  <td class="cell-user"><div class="thumb">${initials(c.name)}</div><div><b>${c.name}</b><br><span style="color:var(--ink-faint);font-size:11.5px;">${c.phone}</span></div></td>
+  <td>${c.room}</td><td><span class="badge inside">${c.cat}</span></td><td><span class="badge ${c.pr}">${c.pr.charAt(0).toUpperCase()+c.pr.slice(1)}</span></td>
+  <td><span class="badge ${c.status}">${statusLabel[c.status]}</span></td><td style="font-size:11.5px;">${c.date}</td>
+  <td><div class="action-icons"><button>👁</button><button>✎</button><button>⋮</button></div></td></tr>`).join('');
+
+/* visitors */
+const visitors = [
+  {name:'Ramesh Kumar', resident:'Rahul Sharma', room:'102 / Bed 2', purpose:'Family', entry:'06:20 PM', exit:'07:10 PM', status:'exited'},
+  {name:'Suresh Patil', resident:'Amit Verma', room:'101 / Bed 1', purpose:'Friend', entry:'07:05 PM', exit:'—', status:'inside'},
+  {name:'Priya Shah', resident:'Neha Patel', room:'105 / Bed 2', purpose:'Family', entry:'05:30 PM', exit:'08:00 PM', status:'exited'},
+  {name:'Mahesh Gupta', resident:'Vikas Jain', room:'103 / Bed 1', purpose:'Delivery', entry:'04:45 PM', exit:'05:15 PM', status:'exited'},
+];
+document.getElementById('visitorsBody').innerHTML = visitors.map((v,i)=>`
+  <tr><td>${i+1}</td><td><b>${v.name}</b></td><td>${v.resident}</td><td>${v.room}</td><td>${v.purpose}</td><td>${v.entry}</td><td>${v.exit}</td>
+  <td>${v.status==='inside'?`<span class="badge inside">● Inside</span> <button class="btn btn-sm outline" style="margin-left:4px;">Mark Exit</button>`:`<span class="badge exited">● Exited</span>`}</td>
+  <td><div class="action-icons"><button>⋮</button></div></td></tr>`).join('');
+
+/* notifications */
+const notifGroups = [
+  {day:"Today — 18 May 2025", items:[
+    {icon:'₹',bg:'bg-blue',title:'Rent Reminder',tag:'New',desc:'Rent for Room 101 / Bed 1 is due on 20 May 2025.',time:'09:30 AM',unread:true},
+    {icon:'✓',bg:'bg-green',title:'Payment Received',desc:'₹8,000 received from Rahul Sharma for May 2025.',time:'09:15 AM',unread:true},
+    {icon:'🔧',bg:'bg-amber',title:'Maintenance Update',desc:'Complaint "Light Not Working" is now In Progress.',time:'08:45 AM',unread:true},
+    {icon:'🍽️',bg:'bg-purple',title:'Menu Update',desc:"Today's dinner menu has been updated. Check Food & Menu section.",time:'08:20 AM',unread:true},
+    {icon:'👤',bg:'bg-red',title:'Visitor Entry',desc:'A new visitor entry has been added for Priya Singh.',time:'08:20 AM',unread:true},
+  ]},
+  {day:"Yesterday — 17 May 2025", items:[
+    {icon:'✓',bg:'bg-green',title:'Complaint Resolved',desc:'Your complaint "Fan Making Noise" has been resolved.',time:'06:30 PM'},
+    {icon:'!',bg:'bg-red',title:'Rent Overdue Alert',desc:'Rent for Room 104 / Bed 3 is overdue by 3 days.',time:'03:40 PM'},
+    {icon:'👤',bg:'bg-blue',title:'New Resident Added',desc:'Amit Verma has been added as a new resident in Room 107 / Bed 4.',time:'11:25 AM'},
+  ]}
+];
+document.getElementById('notifList').innerHTML = notifGroups.map(g=>
+  `<div class="notif-day">${g.day}</div>` + g.items.map(it=>`
+  <div class="notif-item">
+    <div class="dot-ic ${it.bg}">${it.icon}</div>
+    <div style="flex:1;">
+      <div class="title-row"><b>${it.title}</b>${it.tag?`<span class="new-tag">${it.tag}</span>`:''}</div>
+      <p>${it.desc}</p>
+    </div>
+    <div class="time">${it.time}${it.unread?'<span class="unread-dot"></span>':''}</div>
+  </div>`).join('')
+).join('');
+
+/* reports tables */
+document.getElementById('reportPendingRent').innerHTML = [
+  {name:'Amit Verma', room:'101 / Bed 1', bal:'₹8,000', days:'15 days'},
+  {name:'Priya Singh', room:'103 / Bed 1', bal:'₹8,000', days:'12 days'},
+  {name:'Vikash Yadav', room:'104 / Bed 3', bal:'₹8,000', days:'10 days'},
+  {name:'Sourav Das', room:'105 / Bed 2', bal:'₹6,000', days:'7 days'},
+  {name:'Neha Patel', room:'106 / Bed 1', bal:'₹7,000', days:'5 days'},
+].map(p=>`<tr><td>${p.name}</td><td>${p.room}</td><td>${p.bal}</td><td style="color:var(--red);">${p.days}</td></tr>`).join('');
+
+document.getElementById('reportComplaints').innerHTML = [
+  {title:'Water Leakage in Bathroom', name:'Amit Verma', status:'open'},
+  {title:'Light Not Working', name:'Rahul Sharma', status:'progress'},
+  {title:'Fan Making Noise', name:'Priya Singh', status:'open'},
+  {title:'WiFi Connection Issue', name:'Vikash Yadav', status:'progress'},
+  {title:'Door Lock Problem', name:'Sourav Das', status:'resolved'},
+].map(c=>`<tr><td>${c.title}</td><td>${c.name}</td><td><span class="badge ${c.status}">${statusLabel[c.status]}</span></td></tr>`).join('');
+
+/* ---------------- CHARTS ---------------- */
+Chart.defaults.font.family = "'Segoe UI', sans-serif";
+new Chart(document.getElementById('chartBedStatus'),{
+  type:'doughnut',
+  data:{labels:['Occupied','Available','Maintenance'],datasets:[{data:[52,12,0],backgroundColor:['#2563eb','#16a34a','#cbd5e1'],borderWidth:0}]},
+  options:{cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:true}}}
+});
+new Chart(document.getElementById('chartExpense'),{
+  type:'doughnut',
+  data:{labels:['Food & Groceries','Staff Salary','Maintenance','Utilities','Other'],datasets:[{data:[43200,20000,12500,8450,14500],backgroundColor:['#2563eb','#a855f7','#f59e0b','#0ea5e9','#ec4899'],borderWidth:0}]},
+  options:{cutout:'70%',plugins:{legend:{display:false}}}
+});
+new Chart(document.getElementById('chartOcc'),{
+  type:'doughnut',
+  data:{labels:['Occupied','Vacant'],datasets:[{data:[18,2],backgroundColor:['#16a34a','#e2e8f0'],borderWidth:0}]},
+  options:{cutout:'70%',plugins:{legend:{display:false}}}
+});
+new Chart(document.getElementById('chartRent'),{
+  type:'bar',
+  data:{labels:['Dec 2024','Jan 2025','Feb 2025','Mar 2025','Apr 2025','May 2025'],
+  datasets:[{label:'Rent Collected',data:[185000,210000,220000,235000,216000,248000],backgroundColor:'#93c5fd',borderRadius:6,maxBarThickness:34}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'₹'+(v/1000)+'k'},grid:{color:'#eef1f6'}},x:{grid:{display:false}}}}
+});
+</script>
+</body>
+</html>

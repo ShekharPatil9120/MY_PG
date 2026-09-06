@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shree Sai PG | Comfortable Paying Guest Accommodation, Bengaluru</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum-900:#3a0f45;
+    --plum-800:#4c1358;
+    --plum-700:#63166f;
+    --coral-500:#e0576b;
+    --coral-600:#c8455c;
+    --gold-400:#f0c85a;
+    --cream:#fdf7f2;
+    --ink:#2a0f30;
+    --muted:#e7d4ea;
+    --radius-lg:28px;
+    --radius-md:18px;
+    --radius-sm:12px;
+    --shadow:0 20px 50px -20px rgba(30,4,40,0.55);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Manrope', sans-serif;
+    color:var(--cream);
+    background:var(--plum-900);
+    line-height:1.6;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    margin:0;
+    line-height:1.1;
+    color:var(--cream);
+  }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  section{padding:110px 0;}
+  @media (max-width:720px){ section{padding:70px 0;} }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:var(--cream);
+    box-shadow:0 8px 30px -18px rgba(0,0,0,0.4);
+  }
+  .nav-inner{
+    max-width:1180px; margin:0 auto; padding:18px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:20px;
+  }
+  .brand{
+    font-family:'Fraunces', serif;
+    font-weight:700; font-size:1.3rem;
+    color:var(--plum-800);
+    letter-spacing:0.5px;
+  }
+  nav ul{
+    list-style:none; display:flex; gap:30px; margin:0; padding:0;
+    flex-wrap:wrap;
+  }
+  nav a{
+    color:var(--plum-800); font-weight:700; font-size:0.85rem;
+    letter-spacing:0.3px;
+    padding:8px 2px; position:relative;
+  }
+  nav a::after{
+    content:''; position:absolute; left:0; bottom:0; width:0; height:2px;
+    background:var(--coral-500); transition:width .25s ease;
+  }
+  nav a:hover::after{width:100%;}
+  .nav-toggle{display:none; background:none; border:none; font-size:1.6rem; color:var(--plum-800); cursor:pointer;}
+  @media (max-width:900px){
+    nav ul{
+      position:absolute; top:100%; left:0; right:0;
+      background:var(--cream);
+      flex-direction:column; gap:0;
+      max-height:0; overflow:hidden;
+      transition:max-height .3s ease;
+    }
+    nav ul.open{max-height:400px; padding:10px 32px 24px;}
+    nav li{padding:10px 0; border-bottom:1px solid #eee0e6;}
+    .nav-toggle{display:block;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative; overflow:hidden;
+    background:radial-gradient(120% 140% at 100% 0%, var(--plum-700) 0%, var(--plum-900) 55%);
+    padding:100px 0 60px;
+  }
+  .hero::before{
+    content:''; position:absolute; left:-140px; bottom:-160px;
+    width:340px; height:340px; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, var(--coral-500), transparent 70%);
+    opacity:0.55;
+  }
+  .hero::after{
+    content:''; position:absolute; right:-120px; top:-160px;
+    width:300px; height:300px; border-radius:50%;
+    background:radial-gradient(circle at 60% 60%, var(--gold-400), transparent 70%);
+    opacity:0.3;
+  }
+  .hero-grid{
+    position:relative; z-index:1;
+    display:grid; grid-template-columns:1.05fr 0.95fr; gap:60px; align-items:center;
+  }
+  @media (max-width:900px){ .hero-grid{grid-template-columns:1fr;} }
+  .eyebrow-pill{
+    display:inline-block; padding:7px 16px; border-radius:100px;
+    background:rgba(240,200,90,0.14); border:1px solid rgba(240,200,90,0.4);
+    color:var(--gold-400); font-size:0.78rem; font-weight:700;
+    letter-spacing:0.4px; margin-bottom:22px;
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 6vw, 4.4rem);
+    font-weight:600;
+  }
+  .hero h1 em{font-style:italic; color:var(--coral-500);}
+  .hero p.lede{
+    margin-top:22px; font-size:1.15rem; color:var(--muted);
+    max-width:480px;
+  }
+  .hero-actions{display:flex; gap:14px; margin-top:34px; flex-wrap:wrap; align-items:center;}
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:15px 26px; border-radius:100px; font-weight:700; font-size:0.95rem;
+    border:none; cursor:pointer; transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-primary{background:linear-gradient(120deg, var(--coral-500), var(--coral-600)); color:#fff;}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 14px 30px -10px rgba(200,69,92,0.6);}
+  .btn-ghost{background:rgba(255,255,255,0.08); color:var(--cream); border:1px solid rgba(255,255,255,0.28);}
+  .btn-ghost:hover{background:rgba(255,255,255,0.16);}
+  .icon-circle{
+    width:48px; height:48px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem; color:#fff;
+  }
+  .icon-mail{background:var(--gold-400); color:var(--plum-900);}
+  .icon-whatsapp{background:#3ec95f;}
+  .hero-photo{
+    position:relative; border-radius:var(--radius-lg);
+    overflow:hidden; box-shadow:var(--shadow);
+    aspect-ratio:4/5;
+  }
+  .hero-photo img{width:100%; height:100%; object-fit:cover;}
+  .hero-photo-tag{
+    position:absolute; left:20px; bottom:20px;
+    background:rgba(42,15,48,0.75); backdrop-filter:blur(6px);
+    padding:12px 18px; border-radius:var(--radius-sm);
+    font-size:0.85rem; color:var(--cream);
+  }
+
+  /* ---------- SECTION HEADS ---------- */
+  .section-head{max-width:620px; margin:0 auto 56px;}
+  .section-head.center{text-align:center;}
+  .section-head h2{font-size:clamp(2rem,4vw,2.8rem); font-weight:600;}
+  .section-head p{color:var(--muted); margin-top:14px; font-size:1.05rem;}
+  .rule{width:64px; height:3px; background:var(--coral-500); border-radius:2px; margin:18px 0;}
+  .rule.center{margin:18px auto;}
+
+  /* ---------- ABOUT ---------- */
+  .about{background:var(--plum-800);}
+  .about-grid{display:grid; grid-template-columns:0.85fr 1.15fr; gap:56px; align-items:center;}
+  @media (max-width:860px){ .about-grid{grid-template-columns:1fr;} }
+  .about-photo{border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow);}
+  .about-photo img{width:100%; aspect-ratio:3/4; object-fit:cover;}
+  .about-copy p{color:var(--muted); font-size:1.05rem;}
+  .about-stats{display:flex; gap:36px; margin-top:30px; flex-wrap:wrap;}
+  .stat b{font-family:'Fraunces', serif; font-size:2rem; color:var(--gold-400); display:block;}
+  .stat span{font-size:0.85rem; color:var(--muted);}
+
+  /* ---------- SERVICES ---------- */
+  .services{background:var(--plum-900);}
+  .service-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:28px;
+  }
+  @media (max-width:900px){ .service-grid{grid-template-columns:1fr; max-width:420px; margin:0 auto;} }
+  .service-card{
+    background:linear-gradient(160deg, var(--coral-500), var(--coral-600));
+    border-radius:var(--radius-md); padding:14px; box-shadow:var(--shadow);
+  }
+  .service-card img{border-radius:14px; aspect-ratio:4/3; object-fit:cover;}
+  .service-body{padding:22px 10px 10px;}
+  .service-body h3{font-size:1.3rem; font-weight:600; margin-bottom:6px;}
+  .service-body .price{
+    font-family:'Fraunces', serif; font-size:1.4rem; font-weight:600;
+    color:var(--gold-400); margin-bottom:10px;
+  }
+  .service-body .price span{font-family:'Manrope',sans-serif; font-size:0.75rem; color:rgba(255,255,255,0.75); font-weight:500;}
+  .service-body p{font-size:0.92rem; color:rgba(255,255,255,0.9); margin-bottom:18px;}
+  .service-actions{display:flex; gap:10px; flex-wrap:wrap;}
+  .btn-sm{padding:11px 18px; font-size:0.82rem; border-radius:100px;}
+  .btn-light{background:rgba(255,255,255,0.18); color:#fff;}
+  .btn-light:hover{background:rgba(255,255,255,0.3);}
+
+  /* ---------- FACILITIES ---------- */
+  .facilities{background:var(--plum-800);}
+  .facility-panel{
+    background:radial-gradient(120% 150% at 50% 0%, rgba(224,87,107,0.18), transparent 60%), var(--plum-900);
+    border-radius:var(--radius-lg); padding:56px 40px; box-shadow:var(--shadow);
+  }
+  .facility-grid{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:40px 24px; text-align:center;
+  }
+  @media (max-width:900px){ .facility-grid{grid-template-columns:repeat(2, 1fr);} }
+  @media (max-width:500px){ .facility-grid{grid-template-columns:1fr;} }
+  .facility-icon{
+    width:78px; height:78px; margin:0 auto 16px; border-radius:50%;
+    border:1.5px solid rgba(240,200,90,0.55);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.7rem;
+  }
+  .facility-item span{font-weight:700; font-size:0.95rem;}
+
+  /* ---------- GALLERY ---------- */
+  .gallery-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;
+  }
+  @media (max-width:800px){ .gallery-grid{grid-template-columns:repeat(2, 1fr);} }
+  @media (max-width:520px){ .gallery-grid{grid-template-columns:1fr;} }
+  .gallery-grid img{
+    border-radius:var(--radius-md); aspect-ratio:4/3; object-fit:cover;
+    transition:transform .35s ease;
+  }
+  .gallery-grid a{display:block; overflow:hidden; border-radius:var(--radius-md);}
+  .gallery-grid a:hover img{transform:scale(1.06);}
+
+  /* ---------- CONTACT ---------- */
+  .contact{background:var(--plum-800);}
+  .contact-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px;}
+  @media (max-width:900px){ .contact-grid{grid-template-columns:1fr;} }
+  .field{
+    width:100%; padding:16px 18px; margin-bottom:16px;
+    border-radius:var(--radius-sm); border:1px solid rgba(255,255,255,0.25);
+    background:rgba(255,255,255,0.08); color:var(--cream); font-family:inherit; font-size:0.95rem;
+  }
+  .field::placeholder{color:rgba(253,247,242,0.6);}
+  textarea.field{min-height:120px; resize:vertical;}
+  .field:focus{outline:2px solid var(--gold-400); outline-offset:1px;}
+  .contact-info-item{display:flex; gap:16px; margin-bottom:28px;}
+  .contact-info-item .icon-circle{flex-shrink:0; background:rgba(240,200,90,0.16); color:var(--gold-400); border:1px solid rgba(240,200,90,0.4);}
+  .contact-info-item h4{font-family:'Manrope',sans-serif; font-weight:700; margin-bottom:4px;}
+  .contact-info-item p{color:var(--muted); margin:0; font-size:0.95rem;}
+
+  footer{
+    background:var(--plum-900); text-align:center; padding:30px 20px;
+    color:var(--muted); font-size:0.85rem; border-top:1px solid rgba(255,255,255,0.08);
+  }
+  footer a{color:var(--gold-400); font-weight:700;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+    <div class="brand">Shree Sai PG</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+    <nav>
+      <ul id="navList">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#facilities">Facilities</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#contact">Get In Touch</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="home">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow-pill">Paying Guest Accommodation, Bengaluru</span>
+      <h1>A place that feels <em>like home</em>, away from home.</h1>
+      <p class="lede">Fully furnished rooms, home-style meals and round-the-clock security — built for students and working professionals who want comfort without compromise.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">Book a Room</a>
+        <a href="mailto:shekharpatil9120@gmail.com" class="icon-circle icon-mail" title="Email us">&#9993;</a>
+        <a href="https://wa.me/918217090851" class="icon-circle icon-whatsapp" title="WhatsApp us">&#9743;</a>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <img src="exteriar.avif" alt="Shree Sai PG building exterior">
+      <div class="hero-photo-tag">Shree Sai PG, Bengaluru</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section class="about" id="about">
+  <div class="wrap about-grid">
+    <div class="about-photo">
+      <img src="reception.avif" alt="Shree Sai PG reception area">
+    </div>
+    <div class="about-copy">
+      <h2>About Us</h2>
+      <div class="rule"></div>
+      <p>Welcome to <strong>Shree Sai PG</strong>, where comfort, security and convenience meet in the heart of Bengaluru. We provide a safe, well-maintained and homely environment for students and working professionals relocating to the city.</p>
+      <p>Every room is thoughtfully furnished, every meal is home-style, and every guest is treated like family. From spacious sharing rooms to a rooftop terrace and dining hall, Shree Sai PG is built for people who want a comfortable stay without compromising on security or convenience.</p>
+      <div class="about-stats">
+        <div class="stat"><b>10+</b><span>Years Running</span></div>
+        <div class="stat"><b>50+</b><span>Happy Residents</span></div>
+        <div class="stat"><b>24/7</b><span>Security</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SERVICES ================= -->
+<section class="services" id="services">
+  <div class="wrap">
+    <div class="section-head center">
+      <h2>Services</h2>
+      <div class="rule center"></div>
+      <p>Choose the accommodation type that fits you best.</p>
+    </div>
+    <div class="service-grid">
+
+      <div class="service-card">
+        <img src="single sharing.jfif" alt="Single sharing room">
+        <div class="service-body">
+          <h3>Single Sharing</h3>
+          <p class="price">&#8377; 9,000 <span>/ month</span></p>
+          <p>A private room for guests who value their own space, with all the same shared facilities.</p>
+          <div class="service-actions">
+            <a href="#contact" class="btn btn-sm btn-light">Read More</a>
+            <a href="#contact" class="btn btn-sm btn-light">Book Now</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <img src="Double-Sharing-.jpeg" alt="Double sharing room">
+        <div class="service-body">
+          <h3>Double Sharing</h3>
+          <p class="price">&#8377; 7,000 <span>/ month</span></p>
+          <p>A comfortable, budget-friendly room shared between two residents with individual cupboards.</p>
+          <div class="service-actions">
+            <a href="#contact" class="btn btn-sm btn-light">Read More</a>
+            <a href="#contact" class="btn btn-sm btn-light">Book Now</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <img src="trippel sharing.jfif" alt="Triple sharing room">
+        <div class="service-body">
+          <h3>Triple Sharing</h3>
+          <p class="price">&#8377; 5,500 <span>/ month</span></p>
+          <p>Our most affordable option, ideal for students, with all essential amenities included.</p>
+          <div class="service-actions">
+            <a href="#contact" class="btn btn-sm btn-light">Read More</a>
+            <a href="#contact" class="btn btn-sm btn-light">Book Now</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= FACILITIES ================= -->
+<section class="facilities" id="facilities">
+  <div class="wrap">
+    <div class="section-head center">
+      <h2>Facilities</h2>
+      <div class="rule center"></div>
+    </div>
+    <div class="facility-panel">
+      <div class="facility-grid">
+        <div class="facility-item">
+          <div class="facility-icon">&#128715;</div>
+          <span>Individual Cupboard</span>
+        </div>
+        <div class="facility-item">
+          <div class="facility-icon">&#128167;</div>
+          <span>RO Mineral Water</span>
+        </div>
+        <div class="facility-item">
+          <div class="facility-icon">&#127859;</div>
+          <span>Fully Setup Kitchen</span>
+        </div>
+        <div class="facility-item">
+          <div class="facility-icon">&#128681;</div>
+          <span>Washing Machine</span>
+        </div>
+        <div class="facility-item">
+          <div class="facility-icon">&#127958;</div>
+          <span>Spacious Balconies</span>
+        </div>
+        <div class="facility-item">
+          <div class="facility-icon">&#128247;</div>
+          <span>24 hr Security &amp; CCTV</span>
+        </div>
+        <div class="facility-item">
+          <div class="facility-icon">&#128246;</div>
+          <span>WiFi Internet</span>
+        </div>
+        <div class="facility-item">
+          <div class="facility-icon">&#127860;</div>
+          <span>Three Time Food</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GALLERY ================= -->
+<section class="gallery" id="gallery">
+  <div class="wrap">
+    <div class="section-head center">
+      <h2>Gallery</h2>
+      <div class="rule center"></div>
+      <p>A peek into your PG's rooms and common spaces.</p>
+    </div>
+    <div class="gallery-grid">
+      <a href="galary2.jpg" target="_blank"><img src="galary2.jpg" alt="Common area and lounge"></a>
+      <a href="galary3.jfif" target="_blank"><img src="galary3.jfif" alt="Dining hall"></a>
+      <a href="image4.jfif" target="_blank"><img src="image4.jfif" alt="Living space"></a>
+      <a href="galary6.png" target="_blank"><img src="galary6.png" alt="Balcony and facilities"></a>
+      <a href="galaty5.png" target="_blank"><img src="galaty5.png" alt="Room interior"></a>
+      <a href="galary7.jfif" target="_blank"><img src="galary7.jfif" alt="PG amenities"></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="contact" id="contact">
+  <div class="wrap contact-grid">
+    <div>
+      <h2>Get in Touch</h2>
+      <div class="rule"></div>
+      <p style="color:var(--muted); margin-bottom:24px;">Fill in your details and we'll get back to you, or reach out directly on WhatsApp / email.</p>
+      <form id="contactForm">
+        <input class="field" type="text" placeholder="Full Name" required>
+        <input class="field" type="email" placeholder="Email" required>
+        <input class="field" type="tel" placeholder="Phone">
+        <textarea class="field" placeholder="Message"></textarea>
+        <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:6px;">
+          <button type="button" class="btn btn-primary" onclick="sendWhatsapp()">WhatsApp</button>
+          <button type="button" class="btn btn-ghost" onclick="sendEmail()">Email Now</button>
+        </div>
+      </form>
+    </div>
+    <div>
+      <div class="contact-info-item">
+        <div class="icon-circle">&#128205;</div>
+        <div>
+          <h4>Visit Us</h4>
+          <p>7th Cross, Nagarbhavi 2nd Stage, Bengaluru - 560072</p>
+        </div>
+      </div>
+      <div class="contact-info-item">
+        <div class="icon-circle">&#9993;</div>
+        <div>
+          <h4>Email Us</h4>
+          <p>shekharpatil9120@gmail.com<br>muragharajendra@gmail.com</p>
+        </div>
+      </div>
+      <div class="contact-info-item">
+        <div class="icon-circle">&#128222;</div>
+        <div>
+          <h4>Call Us</h4>
+          <p>+91 82170 90851, +91 88670 62099</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  &copy; <span id="year"></span> Shree Sai PG. All rights reserved. Built with care for <a href="#home">our residents</a>.
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const navToggle = document.getElementById('navToggle');
+  const navList = document.getElementById('navList');
+  navToggle.addEventListener('click', () => navList.classList.toggle('open'));
+  navList.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navList.classList.remove('open')));
+
+  function getFormValues(){
+    const form = document.getElementById('contactForm');
+    const inputs = form.querySelectorAll('input, textarea');
+    return {
+      name: inputs[0].value || 'N/A',
+      email: inputs[1].value || 'N/A',
+      phone: inputs[2].value || 'N/A',
+      message: inputs[3].value || 'N/A'
+    };
+  }
+
+  function sendWhatsapp(){
+    const v = getFormValues();
+    const text = encodeURIComponent(`Hi, I'm ${v.name}.\nEmail: ${v.email}\nPhone: ${v.phone}\nMessage: ${v.message}`);
+    window.open(`https://wa.me/918217090851?text=${text}`, '_blank');
+  }
+
+  function sendEmail(){
+    const v = getFormValues();
+    const subject = encodeURIComponent('Enquiry from Shree Sai PG Website');
+    const body = encodeURIComponent(`Name: ${v.name}\nEmail: ${v.email}\nPhone: ${v.phone}\nMessage: ${v.message}`);
+    window.location.href = `mailto:shekharpatil9120@gmail.com?subject=${subject}&body=${body}`;
+  }
+</script>
+
+</body>
+</html>
